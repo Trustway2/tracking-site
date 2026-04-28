@@ -1,43 +1,187 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TrustWay Logistics</title>
+<meta charset="UTF-8">
+<title>TrustWay Logistics</title>
+
+<!-- QR Code Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f5f6fa;
+  padding: 40px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 420px;
+  margin: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+input {
+  padding: 10px;
+  width: 80%;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+}
+
+.timeline {
+  text-align: left;
+  margin-top: 15px;
+}
+
+.step {
+  margin: 5px 0;
+}
+
+.barcode {
+  font-family: monospace;
+  background: black;
+  color: #00ff00;
+  padding: 5px;
+  margin: 10px 0;
+  letter-spacing: 3px;
+}
+
+.stamp {
+  margin-top: 20px;
+  border: 3px solid green;
+  display: inline-block;
+  padding: 10px 20px;
+  color: green;
+  font-weight: bold;
+  transform: rotate(-10deg);
+}
+
+.stamp span {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+</style>
 </head>
 
-<body style="font-family:Arial; text-align:center; background:#f5f6fa; padding:50px;">
+<body>
 
 <h2>TrustWay Logistics</h2>
 
-<div style="background:white; padding:20px; border-radius:10px; max-width:400px; margin:auto;">
-    <h3>Track your shipment</h3>
+<div class="card">
+  <h3>Track your shipment</h3>
 
-    <input type="text" id="trackInput" placeholder="Enter tracking number" style="padding:10px; width:80%;">
-    <br><br>
+  <input type="text" id="trackInput" placeholder="Enter tracking number">
+  <br><br>
 
-    <button onclick="track()" style="padding:10px 20px;">Track</button>
+  <button onclick="track()">Track</button>
 
-    <div id="result" style="margin-top:20px;"></div>
+  <div id="result" style="margin-top:20px;"></div>
 </div>
 
 <script>
-function track() {
-    var input = document.getElementById("trackInput").value;
 
-    if(input == "HC1001") {
-        document.getElementById("result").innerHTML =
-        "<p><b>Customer:</b> Mustafa</p>" +
-        "<p><b>Shipment:</b> Solar powered EV charging devices</p>" +
-        "<p><b>Status:</b> In Transit</p>" +
-        "<p><b>From:</b> Shenzhen port China</p>" +
-        "<p><b>To:</b> Umm Qasr Port, Iraq</p>" +
-        "<p><b>Price:</b> $2900</p>" +
-        "<p><b>Shipment Date:</b> 11 Mar 2026</p>" +
-        "<p><b>Arrival:</b> 7 May 2026</p>" +
-        "<br><b style='color:green;'>✔ TRUSTWAY APPROVED</b>";
-    } else {
-        document.getElementById("result").innerHTML = "Tracking number not found";
-    }
+var shipments = {
+
+"HC1001": {
+  name: "Mustafa",
+  status: "In Transit",
+  from: "Shenzhen port China",
+  to: "Umm Qasr Port, Iraq",
+  price: "$2900",
+  date: "11 Mar 2026",
+  arrival: "7 May 2026",
+  timeline: [
+    "✔ Order Received",
+    "✔ Shipped from China",
+    "🚚 On the way",
+    "📦 Delivery pending"
+  ]
+},
+
+"HC2002": {
+  name: "Ahmed",
+  status: "Delivered",
+  from: "Turkey",
+  to: "Saudi Arabia",
+  price: "$1800",
+  date: "20 Jan 2026",
+  arrival: "1 Feb 2026",
+  timeline: [
+    "✔ Order Received",
+    "✔ Shipped",
+    "✔ In Transit",
+    "✔ Delivered"
+  ]
 }
+
+};
+
+function track() {
+
+  var input = document.getElementById("trackInput").value.trim().toUpperCase();
+  var result = document.getElementById("result");
+
+  if (shipments[input]) {
+
+    var data = shipments[input];
+
+    var color = data.status === "Delivered" ? "green" : "orange";
+
+    var timelineHTML = "";
+    for (var i = 0; i < data.timeline.length; i++) {
+      timelineHTML += "<div class='step'>" + data.timeline[i] + "</div>";
+    }
+
+    result.innerHTML =
+      "<div class='barcode'>" + input + "</div>" +
+      "<div id='qrcode'></div>" +
+
+      "<p><b>Tracking:</b> " + input + "</p>" +
+      "<p><b>Customer:</b> " + data.name + "</p>" +
+      "<p><b>Status:</b> <span style='color:" + color + "'>" + data.status + "</span></p>" +
+
+      "<div class='timeline'>" + timelineHTML + "</div>" +
+
+      "<p><b>From:</b> " + data.from + "</p>" +
+      "<p><b>To:</b> " + data.to + "</p>" +
+      "<p><b>Price:</b> " + data.price + "</p>" +
+      "<p><b>Shipment Date:</b> " + data.date + "</p>" +
+      "<p><b>Arrival:</b> " + data.arrival + "</p>" +
+
+      "<div class='stamp'>✔ APPROVED<span>TRUSTWAY LOGISTICS</span></div>";
+
+    // QR Code
+    document.getElementById("qrcode").innerHTML = "";
+
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://trustway2.github.io/tracking-site/?code=" + input,
+      width: 120,
+      height: 120
+    });
+
+  } else {
+    result.innerHTML = "<p style='color:red'>Tracking number not found</p>";
+  }
+}
+
+// فتح الشحنة من QR
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+
+  if (code) {
+    document.getElementById("trackInput").value = code;
+    track();
+  }
+};
+
 </script>
 
 </body>
