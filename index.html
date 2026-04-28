@@ -15,6 +15,19 @@ body {
   padding: 40px;
 }
 
+/* 🔥 لوجو */
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #0a7d00;
+  margin-bottom: 10px;
+}
+
+.logo span {
+  color: black;
+}
+
+/* كارت */
 .card {
   background: white;
   padding: 25px;
@@ -32,6 +45,7 @@ input {
 button {
   padding: 10px 20px;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .timeline {
@@ -43,23 +57,28 @@ button {
   margin: 5px 0;
 }
 
+/* باركود */
 .barcode {
   font-family: monospace;
   background: black;
-  color: #00ff00;
-  padding: 5px;
+  color: #00ffcc;
+  padding: 6px;
   margin: 10px 0;
   letter-spacing: 3px;
 }
 
+/* 🔥 ختم احترافي */
 .stamp {
-  margin-top: 20px;
-  border: 3px solid green;
+  margin-top: 25px;
+  border: 4px double #0a7d00;
   display: inline-block;
-  padding: 10px 20px;
-  color: green;
+  padding: 15px 30px;
+  color: #0a7d00;
   font-weight: bold;
   transform: rotate(-10deg);
+  font-size: 20px;
+  letter-spacing: 3px;
+  box-shadow: 0 0 15px rgba(0,128,0,0.4);
 }
 
 .stamp span {
@@ -72,117 +91,24 @@ button {
 
 <body>
 
-<h2>TrustWay Logistics</h2>
+<div class="logo">🚚 TrustWay <span>Logistics</span></div>
 
 <div class="card">
-  <h3>Track your shipment</h3>
+<h3>Track your shipment</h3>
 
-  <input type="text" id="trackInput" placeholder="Enter tracking number">
-  <br><br>
+<input type="text" id="trackInput" placeholder="Enter tracking number">
+<br><br>
+<button onclick="track()">Track</button>
 
-  <button onclick="track()">Track</button>
-
-  <div id="result" style="margin-top:20px;"></div>
+<div id="result" style="margin-top:20px;"></div>
 </div>
 
 <script>
 
+// بيانات الشحن
 var shipments = {
-
-"HC1001": {
-  name: "Mustafa",
-  status: "In Transit",
-  from: "Shenzhen port China",
-  to: "Umm Qasr Port, Iraq",
-  price: "$2900",
-  date: "11 Mar 2026",
-  arrival: "7 May 2026",
-  timeline: [
-    "✔ Order Received",
-    "✔ Shipped from China",
-    "🚚 On the way",
-    "📦 Delivery pending"
-  ]
-},
-
-"HC2002": {
-  name: "Ahmed",
-  status: "Delivered",
-  from: "Turkey",
-  to: "Saudi Arabia",
-  price: "$1800",
-  date: "20 Jan 2026",
-  arrival: "1 Feb 2026",
-  timeline: [
-    "✔ Order Received",
-    "✔ Shipped",
-    "✔ In Transit",
-    "✔ Delivered"
-  ]
-}
-
-};
-
-function track() {
-
-  var input = document.getElementById("trackInput").value.trim().toUpperCase();
-  var result = document.getElementById("result");
-
-  if (shipments[input]) {
-
-    var data = shipments[input];
-
-    var color = data.status === "Delivered" ? "green" : "orange";
-
-    var timelineHTML = "";
-    for (var i = 0; i < data.timeline.length; i++) {
-      timelineHTML += "<div class='step'>" + data.timeline[i] + "</div>";
-    }
-
-    result.innerHTML =
-      "<div class='barcode'>" + input + "</div>" +
-      "<div id='qrcode'></div>" +
-
-      "<p><b>Tracking:</b> " + input + "</p>" +
-      "<p><b>Customer:</b> " + data.name + "</p>" +
-      "<p><b>Status:</b> <span style='color:" + color + "'>" + data.status + "</span></p>" +
-
-      "<div class='timeline'>" + timelineHTML + "</div>" +
-
-      "<p><b>From:</b> " + data.from + "</p>" +
-      "<p><b>To:</b> " + data.to + "</p>" +
-      "<p><b>Price:</b> " + data.price + "</p>" +
-      "<p><b>Shipment Date:</b> " + data.date + "</p>" +
-      "<p><b>Arrival:</b> " + data.arrival + "</p>" +
-
-      "<div class='stamp'>✔ APPROVED<span>TRUSTWAY LOGISTICS</span></div>";
-
-    // QR Code
-    document.getElementById("qrcode").innerHTML = "";
-
-    new QRCode(document.getElementById("qrcode"), {
-      text: "https://trustway2.github.io/tracking-site/?code=" + input,
-      width: 120,
-      height: 120
-    });
-
-  } else {
-    result.innerHTML = "<p style='color:red'>Tracking number not found</p>";
-  }
-}
-
-// فتح الشحنة من QR
-window.onload = function() {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-
-  if (code) {
-    document.getElementById("trackInput").value = code;
-    track();
-  }
-};
-
-</script>
-
-</body>
-</html>
+  "HC1001": {
+    name: "Mustafa",
+    status: "In Transit",
+    from: "Shenzhen port China",
+    to: "
