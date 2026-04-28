@@ -2,102 +2,71 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TrustWay Logistics</title>
+<title>Trustway Logistics</title>
 
 <!-- QR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+<!-- BARCODE (المهم 👇) -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<!-- Barcode -->
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <style>
 body {
   font-family: Arial;
   text-align: center;
-  background: #f5f6fa;
-  padding: 30px;
+  background: #f5f5f5;
 }
 
-/* لوجو */
-.logo {
-  font-size: 28px;
-  font-weight: bold;
-  color: #0a7d00;
-}
-
-/* كارت */
 .card {
   background: white;
   padding: 20px;
-  border-radius: 10px;
-  max-width: 450px;
   margin: auto;
+  max-width: 420px;
+  border-radius: 10px;
 }
 
-/* وثيقة */
-.document {
-  background: white;
-  padding: 20px;
-  border: 2px solid #000;
-  margin-top: 20px;
+.doc {
+  border: 2px solid black;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+h2 {
+  color: green;
+}
+
+.field {
+  border: 1px solid #ddd;
+  padding: 6px;
+  margin: 4px 0;
   text-align: left;
 }
 
-/* هيدر */
-.doc-header {
-  border-bottom: 2px solid black;
-  margin-bottom: 10px;
-}
-
-.doc-header h2 {
-  margin: 0;
-  color: #0a7d00;
-}
-
-/* مربعات */
-.box {
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin: 5px 0;
-}
-
-/* ختم */
 .stamp {
-  margin-top: 20px;
   border: 3px solid green;
   display: inline-block;
   padding: 10px 20px;
   color: green;
   font-weight: bold;
   transform: rotate(-10deg);
-}
-
-/* زر */
-button {
-  padding: 10px 20px;
   margin-top: 10px;
-  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="logo">🚚 TRUSTWAY LOGISTICS</div>
+<h2>🚚 TRUSTWAY LOGISTICS</h2>
 
 <div class="card">
-<h3>Track your shipment</h3>
+  <input id="trackInput" placeholder="Enter tracking number">
+  <br><br>
+  <button onclick="track()">Track</button>
 
-<input type="text" id="trackInput" placeholder="Tracking number">
-<br><br>
-<button onclick="track()">Track</button>
-
-<div id="result"></div>
-
-<button onclick="downloadPDF()">Download PDF</button>
+  <div id="result"></div>
 </div>
 
 <script>
@@ -108,81 +77,87 @@ var shipments = {
     status: "In Transit",
     from: "China",
     to: "Iraq",
-    price: "$2900",
-    date: "11 Mar 2026",
-    arrival: "7 May 2026",
     container: "MSKU1234567",
     vessel: "Evergreen",
-    line: "Maersk"
+    line: "Maersk",
+    price: "$2900",
+    date: "11 Mar 2026",
+    arrival: "7 May 2026"
   }
 };
 
 function track() {
+
   var input = document.getElementById("trackInput").value.trim().toUpperCase();
   var result = document.getElementById("result");
 
   if (shipments[input]) {
 
-    var data = shipments[input];
+    var d = shipments[input];
 
-    result.innerHTML =
-    "<div class='document' id='pdfArea'>" +
+    result.innerHTML = `
+    <div class="doc" id="invoice">
 
-    "<div class='doc-header'>" +
-    "<h2>TRUSTWAY LOGISTICS</h2>" +
-    "<p>Official Shipping Document</p>" +
-    "</div>" +
+      <h3>TRUSTWAY LOGISTICS</h3>
+      <p>Official Shipping Document</p>
+      <hr>
 
-    "<svg id='barcode'></svg>" +
-    "<div id='qrcode'></div>" +
+      <!-- باركود حقيقي -->
+      <svg id="barcode"></svg>
 
-    "<div class='box'><b>Tracking:</b> " + input + "</div>" +
-    "<div class='box'><b>Customer:</b> " + data.name + "</div>" +
-    "<div class='box'><b>Status:</b> " + data.status + "</div>" +
+      <div id="qrcode"></div>
 
-    "<div class='box'><b>From:</b> " + data.from + "</div>" +
-    "<div class='box'><b>To:</b> " + data.to + "</div>" +
+      <div class="field"><b>Tracking:</b> ${input}</div>
+      <div class="field"><b>Customer:</b> ${d.name}</div>
+      <div class="field"><b>Status:</b> ${d.status}</div>
+      <div class="field"><b>From:</b> ${d.from}</div>
+      <div class="field"><b>To:</b> ${d.to}</div>
+      <div class="field"><b>Container:</b> ${d.container}</div>
+      <div class="field"><b>Vessel:</b> ${d.vessel}</div>
+      <div class="field"><b>Shipping Line:</b> ${d.line}</div>
+      <div class="field"><b>Price:</b> ${d.price}</div>
+      <div class="field"><b>Shipment Date:</b> ${d.date}</div>
+      <div class="field"><b>Arrival:</b> ${d.arrival}</div>
 
-    "<div class='box'><b>Container:</b> " + data.container + "</div>" +
-    "<div class='box'><b>Vessel:</b> " + data.vessel + "</div>" +
-    "<div class='box'><b>Shipping Line:</b> " + data.line + "</div>" +
+      <div class="stamp">✔ APPROVED</div>
 
-    "<div class='box'><b>Price:</b> " + data.price + "</div>" +
-    "<div class='box'><b>Shipment Date:</b> " + data.date + "</div>" +
-    "<div class='box'><b>Arrival:</b> " + data.arrival + "</div>" +
+      <br><br>
+      <button onclick="downloadPDF()">Download PDF</button>
 
-    "<div class='stamp'>✔ APPROVED</div>" +
+    </div>
+    `;
 
-    "</div>";
-
-    // Barcode
-    JsBarcode("#barcode", input);
+    // ✅ توليد باركود حقيقي (مهم جداً)
+    JsBarcode("#barcode", input, {
+      format: "CODE128",
+      width: 2,
+      height: 70,
+      displayValue: true
+    });
 
     // QR
     document.getElementById("qrcode").innerHTML = "";
     new QRCode(document.getElementById("qrcode"), {
-      text: "https://trustway2.github.io/?code=" + input,
-      width: 100,
-      height: 100
+      text: window.location.href + "?code=" + input,
+      width: 120,
+      height: 120
     });
 
   } else {
-    result.innerHTML = "Tracking not found";
+    result.innerHTML = "Not found";
   }
 }
 
 // PDF
 function downloadPDF() {
-  var element = document.getElementById("pdfArea");
-
+  var element = document.getElementById("invoice");
   html2pdf().from(element).save("shipment.pdf");
 }
 
-// QR Auto
+// auto load
 window.onload = function () {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
-
   if (code) {
     document.getElementById("trackInput").value = code;
     track();
