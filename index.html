@@ -1,20 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustWay Logistics</title>
+</head>
+
+<body style="font-family:Arial; text-align:center; background:#f5f6fa; padding:50px;">
+
+<h2>TrustWay Logistics</h2>
+
+<div style="background:white; padding:20px; border-radius:10px; max-width:400px; margin:auto;">
+    <h3>Track your shipment</h3>
+
+    <input type="text" id="trackInput" placeholder="Enter tracking number" style="padding:10px; width:80%;">
+    <br><br>
+
+    <button onclick="track()" style="padding:10px 20px;">Track</button>
+
+    <div id="result" style="margin-top:20px;"></div>
+</div>
+
 <script>
 function track() {
-  var input = document.getElementById("trackInput").value;
+    var input = document.getElementById("trackInput").value;
 
-  if(input == "HC1001") {
-    document.getElementById("result").innerHTML =
-      "<p><b>Customer:</b> Mustafa</p>" +
-      "<p><b>Shipment:</b> Solar powered EV charging devices</p>" +
-      "<p><b>Status:</b> In Transit</p>" +
-      "<p><b>From:</b> Shenzhen port China</p>" +
-      "<p><b>To:</b> Umm Qasr Port, Iraq</p>" +
-      "<p><b>Price:</b> $2900</p>" +
-      "<p><b>Shipment Date:</b> 11 Mar 2026</p>" +
-      "<p><b>Arrival:</b> 7 May 2026</p>" +
-      "<br><b style='color:green;'>✔ TRUSTWAY APPROVED</b>";
-  } else {
-    document.getElementById("result").innerHTML = "Tracking number not found";
-  }
+    if(input == "HC1001") {
+        document.getElementById("result").innerHTML =
+        "<p><b>Customer:</b> Mustafa</p>" +
+        "<p><b>Shipment:</b> Solar powered EV charging devices</p>" +
+        "<p><b>Status:</b> In Transit</p>" +
+        "<p><b>From:</b> Shenzhen port China</p>" +
+        "<p><b>To:</b> Umm Qasr Port, Iraq</p>" +
+        "<p><b>Price:</b> $2900</p>" +
+        "<p><b>Shipment Date:</b> 11 Mar 2026</p>" +
+        "<p><b>Arrival:</b> 7 May 2026</p>" +
+        "<br><b style='color:green;'>✔ TRUSTWAY APPROVED</b>";
+    } else {
+        document.getElementById("result").innerHTML = "Tracking number not found";
+    }
 }
 </script>
+
+</body>
+</html>
