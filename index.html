@@ -1,129 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shipment Tracking</title>
+  <meta charset="UTF-8">
+  <title>Shipment Tracking</title>
 
-<style>
-body {
-  font-family: Arial;
-  background: #f5f5f5;
-  margin: 0;
-}
+  <style>
+    body {
+      font-family: Arial;
+      background: #f2f2f2;
+      padding: 20px;
+    }
 
-header {
-  background: #1e3a5f;
-  color: white;
-  text-align: center;
-  padding: 15px;
-}
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
 
-.container {
-  padding: 20px;
-}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
 
-.box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-}
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #2d4f7c;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-}
+    .result {
+      margin-top: 20px;
+      display: none;
+    }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: #1e3a5f;
-  color: white;
-  border: none;
-}
+    .status {
+      background: #c8e6c9;
+      padding: 10px;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-.status {
-  background: #c8e6c9;
-  padding: 10px;
-  text-align: center;
-  margin-top: 10px;
-}
-
-img {
-  width: 100%;
-  margin-top: 20px;
-}
-</style>
+    img {
+      width: 100%;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-<h2>Shipment Tracking</h2>
-</header>
-
-<div class="container">
 <div class="box">
+  <h2>Track Your Shipment</h2>
 
-<h3>Track Your Shipment</h3>
+  <input id="trackInput" placeholder="Enter tracking number">
+  <button onclick="track()">Track Shipment</button>
 
-<input id="trackInput" placeholder="Enter tracking number">
-<button onclick="track()">Track Shipment</button>
+  <div class="result" id="resultBox">
+    <div class="status" id="status"></div>
 
-<div id="result"></div>
+    <p><b>Tracking:</b> <span id="tracking"></span></p>
+    <p><b>Customer:</b> <span id="customer"></span></p>
+    <p><b>Shipment:</b> <span id="shipment"></span></p>
+    <p><b>From:</b> <span id="from"></span></p>
+    <p><b>To:</b> <span id="to"></span></p>
+    <p><b>Price:</b> $<span id="price"></span></p>
+    <p><b>Arrival:</b> <span id="arrival"></span></p>
 
-<img src="bill.png">
-
-</div>
+    <img id="docImage" src="your-image.jpg">
+  </div>
 </div>
 
 <!-- Firebase -->
 <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
+    authDomain: "shipping-system-10d98.firebaseapp.com",
+    projectId: "shipping-system-10d98",
+    storageBucket: "shipping-system-10d98.firebasestorage.app",
+    messagingSenderId: "498079715287",
+    appId: "1:498079715287:web:4ea3734979ca7c06d40592"
+  };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
-  authDomain: "shipping-system-10d98.firebaseapp.com",
-  projectId: "shipping-system-10d98",
-  storageBucket: "shipping-system-10d98.firebasestorage.app",
-  messagingSenderId: "498079715287",
-  appId: "1:498079715287:web:4ea3734979ca7c06d40592"
-};
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  window.track = async function () {
+    const code = document.getElementById("trackInput").value;
 
-window.track = async function () {
+    if (!code) {
+      alert("Enter tracking number");
+      return;
+    }
 
-  let id = document.getElementById("trackInput").value;
+    const docRef = doc(db, "shipments", code);
+    const docSnap = await getDoc(docRef);
 
-  const docRef = doc(db, "shipments", id);
-  const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      alert("Invalid Tracking Number");
+      return;
+    }
 
-  if (docSnap.exists()) {
+    const data = docSnap.data();
 
-    let data = docSnap.data();
+    // 🔥 إصلاح التاريخ
+    let arrivalText = "";
+    if (data.estimatedArrival) {
+      const d = new Date(data.estimatedArrival.seconds * 1000);
+      arrivalText = d.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+    }
 
-    document.getElementById("result").innerHTML = `
-      <div class="status">${data.Status}</div>
+    // عرض البيانات
+    document.getElementById("status").innerText = data.status || "";
+    document.getElementById("tracking").innerText = code;
+    document.getElementById("customer").innerText = data["Customer name"] || "";
+    document.getElementById("shipment").innerText = data["Shipment name"] || "";
 
-      <p><b>Tracking:</b> ${id}</p>
-      <p><b>Customer:</b> ${data["Customer name"]}</p>
-      <p><b>Shipment:</b> ${data["Shipment name"]}</p>
-      <p><b>From:</b> ${data.originport}</p>
-      <p><b>To:</b> ${data.destinationPort}</p>
-      <p><b>Price:</b> $${data.price}</p>
-      <p><b>Arrival:</b> ${data.estimatedArrival}</p>
-    `;
+    // ✅ أهم تعديل هنا (المصدر)
+    document.getElementById("from").innerText = data.originport || "";
 
-  } else {
-    alert("Invalid Tracking Number");
-  }
-}
+    document.getElementById("to").innerText = data.destinationPort || "";
+    document.getElementById("price").innerText = data.price || "";
+    document.getElementById("arrival").innerText = arrivalText;
 
+    // إظهار النتائج والصورة
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("docImage").style.display = "block";
+  };
 </script>
 
 </body>
