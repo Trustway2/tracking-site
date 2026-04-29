@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shipment Tracking - Trustway</title>
+<title>Trustway Logistics</title>
 
 <style>
 body {
     font-family: Arial;
-    background: #f4f6f9;
     margin: 0;
+    background: #f4f6f9;
 }
 
 header {
@@ -33,7 +33,7 @@ nav a {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 700px;
     margin: 20px auto;
     background: white;
     padding: 20px;
@@ -52,14 +52,22 @@ button {
     background: #2b5dab;
     color: white;
     border: none;
+    cursor: pointer;
 }
 
 .status {
     background: #c8e6c9;
     padding: 10px;
-    margin-top: 10px;
     text-align: center;
     font-weight: bold;
+}
+
+.timeline {
+    margin-top: 15px;
+}
+
+.timeline div {
+    padding: 5px 0;
 }
 
 .hidden {
@@ -70,73 +78,135 @@ img {
     width: 100%;
     margin-top: 15px;
 }
+
+.note {
+    text-align:center;
+    color:#777;
+    font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-    Shipment Tracking
+<h2>Global Shipment Tracking</h2>
+<p>Trustway Logistics</p>
 </header>
 
 <nav>
-    <a href="#" onclick="showPage('home')">Home</a>
-    <a href="#" onclick="showPage('about')">About</a>
-    <a href="#" onclick="showPage('contact')">Contact</a>
+<a href="#" onclick="showPage('home')">Home</a>
+<a href="#" onclick="showPage('about')">About</a>
+<a href="#" onclick="showPage('contact')">Contact</a>
 </nav>
 
 <div class="container" id="home">
 
-    <h3>Track Your Shipment</h3>
+<h3>Track Your Shipment</h3>
 
-    <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
-    <button onclick="track()">Track Shipment</button>
+<input id="trackingInput" placeholder="Enter Tracking Number">
+<button onclick="track()">Track Shipment</button>
 
-    <div id="result" class="hidden">
+<p id="loading" class="note hidden">Searching shipment...</p>
 
-        <div class="status">IN TRANSIT</div>
+<div id="result" class="hidden"></div>
 
-        <p><b>Tracking:</b> HC1001-A9B7C3D5</p>
-        <p><b>Shipper:</b> Shenzhen Global Trade</p>
-        <p><b>Consignee:</b> Mustafa</p>
-        <p><b>Origin:</b> China</p>
-        <p><b>Destination:</b> Iraq</p>
-        <p><b>Vessel:</b> EVERGREEN</p>
-        <p><b>Container:</b> EVER9876543</p>
-        <p><b>Weight:</b> 18,250 KG</p>
-        <p><b>Departure:</b> 13 Mar 2026</p>
-        <p><b>Arrival:</b> 07 May 2026</p>
+<p class="note">Demo tracking page for testing purposes</p>
 
-        <img src="bill.png" alt="Bill of Lading">
-
-    </div>
 </div>
 
 <!-- ABOUT -->
 <div class="container hidden" id="about">
-    <h2>About Us</h2>
-    <p>
-        Trustway Logistics is a global shipping and logistics company providing reliable
-        cargo tracking and freight services worldwide.
-    </p>
+<h2>About Us</h2>
+<p>
+Trustway Logistics is a global shipping and freight tracking service
+providing fast and reliable cargo solutions.
+</p>
 </div>
 
 <!-- CONTACT -->
 <div class="container hidden" id="contact">
-    <h2>Contact Us</h2>
-    <p>Email: support@trustwayship.com</p>
-    <p>Phone: +86 755 1234 5678</p>
+<h2>Contact Us</h2>
+<p>Email: support@trustwayship.com</p>
+<p>Phone: +86 755 1234 5678</p>
 </div>
 
 <script>
-function track() {
-    let input = document.getElementById("trackingInput").value;
 
-    if(input === "HC1001-A9B7C3D5") {
-        document.getElementById("result").classList.remove("hidden");
-    } else {
-        alert("Invalid Tracking Number");
+const shipments = {
+    "HC1001": {
+        status: "IN TRANSIT",
+        shipper: "Shenzhen Global Trade",
+        consignee: "Mustafa",
+        origin: "China",
+        destination: "Iraq",
+        vessel: "EVERGREEN",
+        container: "EVER9876543",
+        weight: "18,250 KG",
+        departure: "13 Mar 2026",
+        arrival: "07 May 2026",
+        image: "bill.png"
+    },
+    "HC1001-A9B7C3D5": {
+        status: "IN TRANSIT",
+        shipper: "Shenzhen Global Trade",
+        consignee: "Mustafa",
+        origin: "China",
+        destination: "Iraq",
+        vessel: "EVERGREEN",
+        container: "EVER9876543",
+        weight: "18,250 KG",
+        departure: "13 Mar 2026",
+        arrival: "07 May 2026",
+        image: "bill.png"
     }
+};
+
+function track() {
+    let code = document.getElementById("trackingInput").value.trim();
+    let result = document.getElementById("result");
+    let loading = document.getElementById("loading");
+
+    result.classList.add("hidden");
+    loading.classList.remove("hidden");
+
+    setTimeout(() => {
+
+        loading.classList.add("hidden");
+
+        if(shipments[code]) {
+            let d = shipments[code];
+
+            result.innerHTML = `
+                <div class="status">${d.status}</div>
+
+                <p><b>Tracking:</b> ${code}</p>
+                <p><b>Shipper:</b> ${d.shipper}</p>
+                <p><b>Consignee:</b> ${d.consignee}</p>
+                <p><b>Origin:</b> ${d.origin}</p>
+                <p><b>Destination:</b> ${d.destination}</p>
+                <p><b>Vessel:</b> ${d.vessel}</p>
+                <p><b>Container:</b> ${d.container}</p>
+                <p><b>Weight:</b> ${d.weight}</p>
+                <p><b>Departure:</b> ${d.departure}</p>
+                <p><b>Arrival:</b> ${d.arrival}</p>
+
+                <div class="timeline">
+                    <div>✔ Shipment Created</div>
+                    <div>✔ In Transit</div>
+                    <div>⏳ Arriving</div>
+                </div>
+
+                <img src="${d.image}">
+            `;
+
+            result.classList.remove("hidden");
+
+        } else {
+            alert("Invalid Tracking Number");
+        }
+
+    }, 1000);
 }
 
 function showPage(page) {
@@ -146,6 +216,7 @@ function showPage(page) {
 
     document.getElementById(page).classList.remove("hidden");
 }
+
 </script>
 
 </body>
