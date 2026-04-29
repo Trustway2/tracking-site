@@ -6,12 +6,31 @@
 <title>Trustway Logistics</title>
 
 <style>
-body {font-family: Arial; margin: 0; background: #f4f6f9;}
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f4f6f9;
+}
 
-header {background: #2b5dab; color: white; padding: 15px; text-align: center;}
+header {
+    background: #2b5dab;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
 
-nav {background: #1f4a8a; padding: 10px; text-align: center;}
-nav a {color: white; margin: 0 10px; text-decoration: none; font-weight: bold;}
+nav {
+    background: #1f4a8a;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
 
 .container {
     max-width: 700px;
@@ -21,7 +40,11 @@ nav a {color: white; margin: 0 10px; text-decoration: none; font-weight: bold;}
     border-radius: 10px;
 }
 
-input {width: 100%; padding: 10px; margin-bottom: 10px;}
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 
 button {
     width: 100%;
@@ -29,6 +52,7 @@ button {
     background: #2b5dab;
     color: white;
     border: none;
+    cursor: pointer;
 }
 
 .status {
@@ -38,9 +62,11 @@ button {
     font-weight: bold;
 }
 
-.hidden {display: none;}
-
-img {width: 100%; margin-top: 15px;}
+img {
+    width: 100%;
+    margin-top: 15px;
+    border-radius: 8px;
+}
 </style>
 </head>
 
@@ -64,80 +90,83 @@ img {width: 100%; margin-top: 15px;}
 <input id="trackingInput" placeholder="Enter Tracking Number">
 <button onclick="track()">Track Shipment</button>
 
-<div id="result" class="hidden"></div>
+<div id="result" style="margin-top:15px;"></div>
 
 </div>
 
-<div class="container hidden" id="about">
+<!-- ABOUT -->
+<div class="container" id="about" style="display:none;">
 <h2>About Us</h2>
-<p>Trustway Logistics is a global shipping company providing reliable cargo services.</p>
+<p>Trustway Logistics provides global cargo tracking services.</p>
 </div>
 
-<div class="container hidden" id="contact">
-<h2>Contact</h2>
+<!-- CONTACT -->
+<div class="container" id="contact" style="display:none;">
+<h2>Contact Us</h2>
 <p>Email: support@trustwayship.com</p>
-<p>Phone: +86 755 1234 5678</p>
 </div>
 
 <script>
 
-// ✅ بيانات ثابتة 100%
 const shipments = {
-    "HC1001": {
-        status: "In Transit",
-        customer: "Mustafa fathelrhman",
-        shipment: "Solar powered ev charging devices",
-        origin: "Shenzhen Port, China",
-        destination: "Umm Qasr Port, Iraq",
-        price: 2900,
-        arrival: "7 May 2026",
-        image: "bill.png"
-    },
-    "HC1001-A9B7C3D5": {
-        status: "In Transit",
-        customer: "Mustafa fathelrhman",
-        shipment: "Solar powered ev charging devices",
-        origin: "Shenzhen Port, China",
-        destination: "Umm Qasr Port, Iraq",
-        price: 2900,
-        arrival: "7 May 2026",
-        image: "bill.png"
-    }
+"HC1001": {
+status: "In Transit",
+customer: "Mustafa fathelrhman",
+shipment: "Solar powered ev charging devices",
+from: "Shenzhen Port, China",
+to: "Umm Qasr Port, Iraq",
+price: "$2900",
+arrival: "7 May 2026",
+image: "bill.jpg"
+},
+
+"HC1001-A9B7C3D5": {
+status: "In Transit",
+customer: "Mustafa fathelrhman",
+shipment: "Solar powered ev charging devices",
+from: "Shenzhen Port, China",
+to: "Umm Qasr Port, Iraq",
+price: "$2900",
+arrival: "7 May 2026",
+image: "bill.jpg"
+}
 };
 
 function track() {
-    let code = document.getElementById("trackingInput").value.trim();
-    let result = document.getElementById("result");
 
-    if(shipments[code]) {
-        let d = shipments[code];
+let code = document.getElementById("trackingInput").value.trim();
+let result = document.getElementById("result");
 
-        result.innerHTML = `
-            <div class="status">${d.status}</div>
+if(shipments[code]) {
 
-            <p><b>Tracking:</b> ${code}</p>
-            <p><b>Customer:</b> ${d.customer}</p>
-            <p><b>Shipment:</b> ${d.shipment}</p>
-            <p><b>From:</b> ${d.origin}</p>
-            <p><b>To:</b> ${d.destination}</p>
-            <p><b>Price:</b> $${d.price}</p>
-            <p><b>Arrival:</b> ${d.arrival}</p>
+let d = shipments[code];
 
-            <img src="${d.image}">
-        `;
+result.innerHTML = `
+<div class="status">${d.status}</div>
 
-        result.classList.remove("hidden");
-    } else {
-        alert("Tracking number not found");
-    }
+<p><b>Tracking:</b> ${code}</p>
+<p><b>Customer:</b> ${d.customer}</p>
+<p><b>Shipment:</b> ${d.shipment}</p>
+<p><b>From:</b> ${d.from}</p>
+<p><b>To:</b> ${d.to}</p>
+<p><b>Price:</b> ${d.price}</p>
+<p><b>Arrival:</b> ${d.arrival}</p>
+
+<img src="${d.image}">
+`;
+
+} else {
+result.innerHTML = "<p style='color:red;'>Tracking number not found</p>";
+}
+
 }
 
 function showPage(page) {
-    document.getElementById("home").classList.add("hidden");
-    document.getElementById("about").classList.add("hidden");
-    document.getElementById("contact").classList.add("hidden");
+document.getElementById("home").style.display = "none";
+document.getElementById("about").style.display = "none";
+document.getElementById("contact").style.display = "none";
 
-    document.getElementById(page).classList.remove("hidden");
+document.getElementById(page).style.display = "block";
 }
 
 </script>
