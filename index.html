@@ -2,181 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Trustway Logistics - Tracking</title>
+<title>Shipment Tracking</title>
 
 <style>
 body {
-    margin: 0;
     font-family: Arial;
-    background: #eef2f7;
+    background: #f2f2f2;
+    margin: 0;
 }
 
-/* HEADER */
 .header {
-    background: #0d6efd;
+    background: #1e6bd6;
     color: white;
-    padding: 15px;
     text-align: center;
+    padding: 15px;
     font-size: 20px;
-    font-weight: bold;
 }
 
-/* BOX */
 .container {
-    max-width: 700px;
+    width: 90%;
+    max-width: 500px;
     margin: 30px auto;
     background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-/* INPUT */
-input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-top: 10px;
-}
-
-/* BUTTON */
-button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 10px;
-    background: #0d6efd;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #084298;
-}
-
-/* RESULT */
-.result {
-    display: none;
-    margin-top: 25px;
-}
-
-/* CARD */
-.card {
-    background: #f9fbfd;
     padding: 20px;
     border-radius: 10px;
 }
 
-/* STATUS */
-.status {
+input {
+    width: 100%;
     padding: 10px;
-    border-radius: 6px;
-    background: #d1e7dd;
-    color: #0f5132;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #1e6bd6;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.status {
+    margin-top: 15px;
+    padding: 10px;
+    background: #d4edda;
     text-align: center;
     font-weight: bold;
-    margin-bottom: 15px;
+    display: none;
 }
 
-/* GRID */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.label {
-    font-weight: bold;
-    color: #555;
-}
-
-.value {
-    color: #000;
-}
-
-/* IMAGE */
-img {
-    width: 100%;
+.error {
     margin-top: 15px;
-    border-radius: 8px;
+    padding: 10px;
+    background: #f8d7da;
+    text-align: center;
+    color: red;
+    display: none;
+}
+
+.result {
+    margin-top: 15px;
+    display: none;
+}
+
+.loading {
+    text-align: center;
+    display: none;
+    margin-top: 10px;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="header">
-    TRUSTWAY LOGISTICS - TRACKING
-</div>
+<div class="header">Shipment Tracking</div>
 
 <div class="container">
 
-    <h3>Track Your Shipment</h3>
+    <label>Enter Tracking Number</label>
+    <input id="trackInput" placeholder="Example: HC1001">
 
-    <input type="text" id="trackingInput" placeholder="Enter tracking number">
+    <button onclick="track()">Track Shipment</button>
 
-    <button onclick="trackShipment()">Track Shipment</button>
+    <div class="loading" id="loading">Checking shipment...</div>
 
-    <div id="result" class="result">
+    <div class="error" id="error">Tracking number not found</div>
 
-        <div class="card">
+    <div class="status" id="status"></div>
 
-            <div class="status">IN TRANSIT</div>
-
-            <div class="grid">
-                <div class="label">Tracking Number:</div>
-                <div class="value">HC1001</div>
-
-                <div class="label">Shipper:</div>
-                <div class="value">Shenzhen Global Trade</div>
-
-                <div class="label">Consignee:</div>
-                <div class="value">Mustafa</div>
-
-                <div class="label">Origin:</div>
-                <div class="value">Shenzhen, China</div>
-
-                <div class="label">Destination:</div>
-                <div class="value">Umm Qasr, Iraq</div>
-
-                <div class="label">Vessel:</div>
-                <div class="value">EVERGREEN</div>
-
-                <div class="label">Container:</div>
-                <div class="value">MSKU1234567</div>
-
-                <div class="label">Weight:</div>
-                <div class="value">18,250 KG</div>
-
-                <div class="label">Departure:</div>
-                <div class="value">13 Mar 2026</div>
-
-                <div class="label">Arrival:</div>
-                <div class="value">07 May 2026</div>
-            </div>
-
-            <img id="shipmentImage" src="Bill.png" style="display:none;">
-
-        </div>
-
-    </div>
+    <div class="result" id="result"></div>
 
 </div>
 
 <script>
-function trackShipment() {
-    var code = document.getElementById("trackingInput").value;
 
-    if(code === "HC1001") {
-        document.getElementById("result").style.display = "block";
-        document.getElementById("shipmentImage").style.display = "block";
-    } else {
-        alert("Tracking number not found");
+const shipments = {
+    "HC1001": {
+        status: "IN TRANSIT",
+        shipper: "Shenzhen Global Trade",
+        consignee: "Mustafa",
+        origin: "China",
+        destination: "Iraq",
+        vessel: "EVERGREEN",
+        container: "MSKU1234567",
+        weight: "18,250 KG",
+        departure: "13 Mar 2026",
+        arrival: "07 May 2026"
+    },
+
+    "HC2002": {
+        status: "DELIVERED",
+        shipper: "Dubai Export Co.",
+        consignee: "Ahmed",
+        origin: "UAE",
+        destination: "Egypt",
+        vessel: "MAERSK",
+        container: "MSKU999888",
+        weight: "9,000 KG",
+        departure: "01 Feb 2026",
+        arrival: "20 Feb 2026"
     }
+};
+
+function track() {
+
+    let code = document.getElementById("trackInput").value.trim();
+
+    document.getElementById("error").style.display = "none";
+    document.getElementById("result").style.display = "none";
+    document.getElementById("status").style.display = "none";
+
+    document.getElementById("loading").style.display = "block";
+
+    setTimeout(() => {
+
+        document.getElementById("loading").style.display = "none";
+
+        if (shipments[code]) {
+
+            let s = shipments[code];
+
+            document.getElementById("status").innerText = s.status;
+            document.getElementById("status").style.display = "block";
+
+            document.getElementById("result").innerHTML = `
+                <p><b>Tracking:</b> ${code}</p>
+                <p><b>Shipper:</b> ${s.shipper}</p>
+                <p><b>Consignee:</b> ${s.consignee}</p>
+                <p><b>Origin:</b> ${s.origin}</p>
+                <p><b>Destination:</b> ${s.destination}</p>
+                <p><b>Vessel:</b> ${s.vessel}</p>
+                <p><b>Container:</b> ${s.container}</p>
+                <p><b>Weight:</b> ${s.weight}</p>
+                <p><b>Departure:</b> ${s.departure}</p>
+                <p><b>Arrival:</b> ${s.arrival}</p>
+                <br>
+                <img src="Bill.png" width="100%">
+            `;
+
+            document.getElementById("result").style.display = "block";
+
+        } else {
+            document.getElementById("error").style.display = "block";
+        }
+
+    }, 1500);
 }
+
 </script>
 
 </body>
