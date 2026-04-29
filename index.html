@@ -1,65 +1,70 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Shipment Tracking</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f2f2f2;
-      margin: 0;
-    }
-    .header {
-      background: #2d4f7c;
-      padding: 15px;
-      color: white;
-      text-align: center;
-    }
-    .nav {
-      background: #2d4f7c;
-      padding: 10px;
-      text-align: center;
-    }
-    .nav a {
-      color: white;
-      margin: 10px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .container {
-      width: 90%;
-      max-width: 500px;
-      margin: 30px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #2d4f7c;
-      color: white;
-      border: none;
-    }
-    .status {
-      background: #c8e6c9;
-      padding: 10px;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .result {
-      margin-top: 15px;
-    }
-    img {
-      width: 100%;
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Shipment Tracking</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f2f2f2;
+  margin: 0;
+}
+.header {
+  background: #2d4f7c;
+  padding: 15px;
+  color: white;
+  text-align: center;
+}
+.nav {
+  background: #2d4f7c;
+  padding: 10px;
+  text-align: center;
+}
+.nav a {
+  color: white;
+  margin: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.container {
+  width: 90%;
+  max-width: 500px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  background: #2d4f7c;
+  color: white;
+  border: none;
+}
+.status {
+  background: #c8e6c9;
+  padding: 10px;
+  text-align: center;
+  margin-top: 10px;
+  display: none;
+}
+.result {
+  margin-top: 15px;
+  display: none;
+}
+img {
+  width: 100%;
+  margin-top: 15px;
+  display: none;
+}
+</style>
 </head>
 
 <body>
@@ -78,33 +83,81 @@
   <input type="text" id="trackInput" placeholder="Enter tracking number">
   <button onclick="track()">Track Shipment</button>
 
-  <div id="status" class="status" style="display:none;"></div>
+  <div id="status" class="status"></div>
 
-  <div id="result" class="result" style="display:none;">
-    <p><b>Tracking:</b> HC1001</p>
-    <p><b>Customer:</b> Mustafa fathelrhman</p>
-    <p><b>Shipment:</b> Solar powered ev charging devices</p>
-    <p><b>From:</b> Shenzhen port China</p>
-    <p><b>To:</b> Umm Qasr Port, Iraq</p>
-    <p><b>Price:</b> $2900</p>
-    <p><b>Arrival:</b> 7 May 2026</p>
+  <div id="result" class="result">
+    <p><b>Tracking:</b> <span id="tracking"></span></p>
+    <p><b>Customer:</b> <span id="customer"></span></p>
+    <p><b>Shipment:</b> <span id="shipment"></span></p>
+    <p><b>From:</b> <span id="from"></span></p>
+    <p><b>To:</b> <span id="to"></span></p>
+    <p><b>Price:</b> $<span id="price"></span></p>
+    <p><b>Arrival:</b> <span id="arrival"></span></p>
 
-    <img src="YOUR_IMAGE_URL_HERE">
+    <img id="shipmentImage">
   </div>
 </div>
 
-<script>
-function track() {
-  var input = document.getElementById("trackInput").value;
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-  if (input === "HC1001") {
+const firebaseConfig = {
+  apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
+  authDomain: "shipping-system-10d98.firebaseapp.com",
+  projectId: "shipping-system-10d98",
+  storageBucket: "shipping-system-10d98.firebasestorage.app",
+  messagingSenderId: "498079715287",
+  appId: "1:498079715287:web:4ea3734979ca7c06d40592"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.track = async function () {
+  const code = document.getElementById("trackInput").value;
+
+  const docRef = doc(db, "shipments", code);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+
     document.getElementById("status").style.display = "block";
-    document.getElementById("status").innerText = "In Transit";
+    document.getElementById("status").innerText = data.status || "In Transit";
+
     document.getElementById("result").style.display = "block";
+
+    document.getElementById("tracking").innerText = code;
+    document.getElementById("customer").innerText = data.customer_name || "";
+    document.getElementById("shipment").innerText = data.shipment_name || "";
+
+    // حل مشكلة From
+    document.getElementById("from").innerText = data.originport || "";
+
+    document.getElementById("to").innerText = data.destinationPort || "";
+    document.getElementById("price").innerText = data.price || "";
+
+    // حل مشكلة التاريخ
+    if (data.estimatedArrival && data.estimatedArrival.toDate) {
+      document.getElementById("arrival").innerText =
+        data.estimatedArrival.toDate().toLocaleDateString();
+    } else {
+      document.getElementById("arrival").innerText = data.estimatedArrival || "";
+    }
+
+    // حل مشكلة الصورة
+    if (data.imageUrl) {
+      const img = document.getElementById("shipmentImage");
+      img.src = data.imageUrl;
+      img.style.display = "block";
+    }
+
   } else {
     alert("Tracking number not found");
   }
-}
+};
 </script>
 
 </body>
