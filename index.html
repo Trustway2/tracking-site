@@ -3,126 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shipment Tracking</title>
+<title>Trustway Logistics</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-    margin: 0;
-}
-
-.header {
-    background: #2d6cdf;
-    color: white;
-    text-align: center;
-    padding: 15px;
-    font-size: 20px;
-}
-
-.container {
-    max-width: 600px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: #2d6cdf;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #1f4fa8;
-}
-
-.status {
-    background: #d4edda;
-    padding: 10px;
-    text-align: center;
-    margin-top: 15px;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-.details {
-    margin-top: 15px;
-    line-height: 1.8;
-}
-
-img {
-    width: 100%;
-    margin-top: 20px;
-    border-radius: 8px;
-}
+body {font-family: Arial; background:#f2f4f8; margin:0;}
+header {background:#1e3a8a; color:white; padding:15px; text-align:center;}
+nav {background:#111827; padding:10px; text-align:center;}
+nav a {color:white; margin:10px; text-decoration:none;}
+.container {max-width:600px; margin:30px auto; background:white; padding:20px; border-radius:10px;}
+input {width:100%; padding:10px;}
+button {width:100%; padding:10px; margin-top:10px; background:#2563eb; color:white; border:none;}
+.result {margin-top:20px; padding:15px; background:#f9fafb;}
 </style>
 </head>
 
 <body>
 
-<div class="header">Shipment Tracking</div>
+<header>
+<h2>Shipment Tracking</h2>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+</nav>
 
 <div class="container">
+<h3>Track Your Shipment</h3>
 
-    <h3>Track Your Shipment</h3>
+<input id="trackInput" placeholder="Enter Tracking Number">
+<button onclick="track()">Track</button>
 
-    <!-- INPUT بدون أي placeholder -->
-    <input id="trackInput" type="text" required>
-
-    <button onclick="trackShipment()">Track Shipment</button>
-
-    <div id="result"></div>
-
+<div id="result"></div>
 </div>
 
 <script>
-function trackShipment() {
-    var code = document.getElementById("trackInput").value;
-    var result = document.getElementById("result");
+const data = {
+"HC1001": {
+status:"IN TRANSIT",
+shipper:"Shenzhen Global Trade",
+consignee:"Mustafa",
+origin:"China",
+destination:"Iraq"
+},
+"TR2002": {
+status:"DELIVERED",
+shipper:"Dubai Export",
+consignee:"Ahmed",
+origin:"UAE",
+destination:"Egypt"
+}
+};
 
-    if(code === "HC1001") {
-        result.innerHTML = `
-        <div class="status">IN TRANSIT</div>
+function track(){
+let code = document.getElementById("trackInput").value.toUpperCase();
+let r = document.getElementById("result");
 
-        <div class="details">
-        <b>Tracking:</b> HC1001<br>
-        <b>Shipper:</b> Shenzhen Global Trade<br>
-        <b>Consignee:</b> Mustafa<br>
-        <b>Origin:</b> China<br>
-        <b>Destination:</b> Iraq<br>
-        <b>Vessel:</b> EVERGREEN<br>
-        <b>Container:</b> MSKU1234567<br>
-        <b>Weight:</b> 18,250 KG<br>
-        <b>Departure:</b> 13 Mar 2026<br>
-        <b>Arrival:</b> 07 May 2026
-        </div>
-
-        <img src="Bill.png">
-        `;
-    } else {
-        result.innerHTML = `
-        <div style="color:red; text-align:center; margin-top:15px;">
-        Invalid Tracking Number
-        </div>
-        `;
-    }
+if(data[code]){
+let d = data[code];
+r.innerHTML = `
+<h3>${d.status}</h3>
+<p><b>Tracking:</b> ${code}</p>
+<p><b>Shipper:</b> ${d.shipper}</p>
+<p><b>Consignee:</b> ${d.consignee}</p>
+<p><b>From:</b> ${d.origin}</p>
+<p><b>To:</b> ${d.destination}</p>
+`;
+}else{
+r.innerHTML = "<p style='color:red'>Not Found</p>";
+}
 }
 </script>
 
