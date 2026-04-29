@@ -2,58 +2,82 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TrustWay Shipping</title>
 
 <style>
 body {
-    font-family: Arial;
-    margin: 0;
-    background: #f5f5f5;
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
 }
 
 header {
-    background: #2c4a73;
-    color: white;
-    text-align: center;
-    padding: 15px;
+  background: #1e3a5f;
+  color: white;
+  text-align: center;
+  padding: 15px;
 }
 
 nav {
-    background: #ddd;
-    text-align: center;
-    padding: 10px;
+  background: #ddd;
+  text-align: center;
+  padding: 10px;
 }
 
 nav a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: black;
+  margin: 10px;
+  text-decoration: none;
+  color: black;
 }
 
 .container {
-    width: 90%;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+  padding: 20px;
+}
+
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background: #2c4a73;
-    color: white;
-    border: none;
+  width: 100%;
+  padding: 10px;
+  background: #2f4f75;
+  color: white;
+  border: none;
 }
 
-.result {
-    margin-top: 20px;
+.status {
+  background: #b7d3b7;
+  padding: 10px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+#result {
+  display: none;
+  margin-top: 15px;
+}
+
+img {
+  width: 100%;
+  margin-top: 10px;
+}
+
+footer {
+  background: #1e3a5f;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
 }
 </style>
 </head>
@@ -61,88 +85,63 @@ button {
 <body>
 
 <header>
-    <h2>TrustWay Shipping</h2>
+<h2>TrustWay Shipping</h2>
 </header>
 
 <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+<a href="#">Home</a>
+<a href="#">About</a>
+<a href="#">Contact</a>
 </nav>
 
 <div class="container">
-    <h3>Track Your Shipment</h3>
+<div class="box">
 
-    <input type="text" id="trackInput" placeholder="Enter tracking number">
-    <button onclick="track()">Track Shipment</button>
+<h3>Track Your Shipment</h3>
 
-    <div class="result" id="result"></div>
+<input type="text" id="trackingInput" placeholder="Enter tracking number">
+<button onclick="track()">Track Shipment</button>
+
+<div id="result"></div>
+
+</div>
 </div>
 
-<footer style="text-align:center;padding:10px;background:#2c4a73;color:white;">
+<footer>
 © 2026 TrustWay Logistics
 </footer>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+<script>
+function track() {
+  let code = document.getElementById("trackingInput").value.trim();
+  let result = document.getElementById("result");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
-  authDomain: "shipping-system-10d98.firebaseapp.com",
-  projectId: "shipping-system-10d98",
-  storageBucket: "shipping-system-10d98.firebasestorage.app",
-  messagingSenderId: "498079715287",
-  appId: "1:498079715287:web:4ea3734979ca7c06d40592"
-};
+  // امسح القديم
+  result.innerHTML = "";
+  result.style.display = "none";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  if(code === "HC1001") {
 
-window.track = async function () {
-    const input = document.getElementById("trackInput").value.trim();
-    const resultDiv = document.getElementById("result");
+    result.style.display = "block";
 
-    resultDiv.innerHTML = "Searching...";
+    result.innerHTML = `
+      <div class="status">In Transit</div>
 
-    const querySnapshot = await getDocs(collection(db, "shipments"));
+      <p><b>Tracking:</b> HC1001</p>
+      <p><b>Customer:</b> Mustafa fathelrhman</p>
+      <p><b>Shipment:</b> Solar powered ev charging devices</p>
+      <p><b>From:</b> Shenzhen port China</p>
+      <p><b>To:</b> Umm Qasr Port, Iraq</p>
+      <p><b>Price:</b> $2900</p>
+      <p><b>Arrival:</b> 7 May 2026</p>
 
-    let found = false;
+      <img src="https://i.imgur.com/8Km9tLL.png">
+    `;
 
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
-
-        if (data.trackingNumber === input) {
-            found = true;
-
-            // تحويل التاريخ
-            let arrival = "";
-            if (data.estimatedArrival?.seconds) {
-                const d = new Date(data.estimatedArrival.seconds * 1000);
-                arrival = d.toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                });
-            }
-
-            resultDiv.innerHTML = `
-                <p><b>Tracking:</b> ${data.trackingNumber}</p>
-                <p><b>Customer:</b> ${data.customerName}</p>
-                <p><b>Shipment:</b> ${data.shipmentName}</p>
-                <p><b>From:</b> ${data.originport}</p>
-                <p><b>To:</b> ${data.destinationPort}</p>
-                <p><b>Price:</b> $${data.price}</p>
-                <p><b>Arrival:</b> ${arrival}</p>
-            `;
-        }
-    });
-
-    if (!found) {
-        resultDiv.innerHTML = "Tracking number not found";
-    }
-};
+  } else {
+    alert("❌ Tracking number not found");
+  }
+}
 </script>
 
 </body>
