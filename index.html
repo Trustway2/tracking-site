@@ -14,156 +14,164 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f5f5f5;
+body{
+font-family: Arial;
+text-align:center;
+background:#f5f5f5;
+padding:20px;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  margin: auto;
-  max-width: 420px;
-  border-radius: 10px;
+.card{
+background:#fff;
+padding:20px;
+border-radius:10px;
+max-width:400px;
+margin:auto;
 }
 
-.doc {
-  border: 2px solid black;
-  padding: 15px;
-  margin-top: 15px;
+input{
+padding:10px;
+width:80%;
 }
 
-h2 {
-  color: green;
+button{
+padding:10px 20px;
+margin-top:10px;
+cursor:pointer;
 }
 
-.field {
-  border: 1px solid #ddd;
-  padding: 6px;
-  margin: 4px 0;
-  text-align: left;
+.doc{
+margin-top:20px;
+border:2px solid #000;
+padding:15px;
+text-align:left;
 }
 
-.stamp {
-  border: 3px solid green;
-  display: inline-block;
-  padding: 10px 20px;
-  color: green;
-  font-weight: bold;
-  transform: rotate(-10deg);
-  margin-top: 10px;
+h2{
+color:green;
+text-align:center;
+}
+
+.stamp{
+margin-top:20px;
+border:3px solid green;
+display:inline-block;
+padding:10px;
+color:green;
+transform:rotate(-10deg);
+font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
+<div class="card">
 <h2>🚚 TRUSTWAY LOGISTICS</h2>
 
-<div class="card">
-  <input id="trackInput" placeholder="Enter tracking number">
-  <br><br>
-  <button onclick="track()">Track</button>
+<input id="trackInput" placeholder="Enter tracking">
+<br>
+<button onclick="track()">Track</button>
 
-  <div id="result"></div>
+<div id="result"></div>
+
+<button onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <script>
 
 var shipments = {
-  "HC1001": {
-    name: "Mustafa",
-    status: "In Transit",
-    from: "China",
-    to: "Iraq",
-    container: "MSKU1234567",
-    vessel: "Evergreen",
-    line: "Maersk",
-    price: "$2900",
-    date: "11 Mar 2026",
-    arrival: "7 May 2026"
-  }
+"HC1001":{
+name:"Mustafa",
+status:"In Transit",
+from:"China",
+to:"Iraq",
+price:"$2900",
+date:"11 Mar 2026",
+arrival:"7 May 2026",
+container:"MSKU1234567",
+vessel:"Evergreen",
+line:"Maersk"
+}
 };
 
-function track() {
+function track(){
 
-  var input = document.getElementById("trackInput").value.trim().toUpperCase();
-  var result = document.getElementById("result");
+var input = document.getElementById("trackInput").value.trim().toUpperCase();
+var result = document.getElementById("result");
 
-  if (shipments[input]) {
+if(shipments[input]){
 
-    var d = shipments[input];
+var d = shipments[input];
 
-    result.innerHTML = `
-    <div class="doc" id="invoice">
+result.innerHTML = `
+<div class="doc" id="pdfContent">
 
-      <h3>TRUSTWAY LOGISTICS</h3>
-      <p>Official Shipping Document</p>
-      <hr>
+<h2>TRUSTWAY LOGISTICS</h2>
+<p>Official Shipping Document</p>
+<hr>
 
-      <!-- باركود حقيقي -->
-      <svg id="barcode"></svg>
+<svg id="barcode"></svg>
 
-      <div id="qrcode"></div>
+<p style="text-align:center">${input}</p>
 
-      <div class="field"><b>Tracking:</b> ${input}</div>
-      <div class="field"><b>Customer:</b> ${d.name}</div>
-      <div class="field"><b>Status:</b> ${d.status}</div>
-      <div class="field"><b>From:</b> ${d.from}</div>
-      <div class="field"><b>To:</b> ${d.to}</div>
-      <div class="field"><b>Container:</b> ${d.container}</div>
-      <div class="field"><b>Vessel:</b> ${d.vessel}</div>
-      <div class="field"><b>Shipping Line:</b> ${d.line}</div>
-      <div class="field"><b>Price:</b> ${d.price}</div>
-      <div class="field"><b>Shipment Date:</b> ${d.date}</div>
-      <div class="field"><b>Arrival:</b> ${d.arrival}</div>
+<div id="qrcode"></div>
 
-      <div class="stamp">✔ APPROVED</div>
+<p><b>Tracking:</b> ${input}</p>
+<p><b>Customer:</b> ${d.name}</p>
+<p><b>Status:</b> ${d.status}</p>
+<p><b>From:</b> ${d.from}</p>
+<p><b>To:</b> ${d.to}</p>
+<p><b>Container:</b> ${d.container}</p>
+<p><b>Vessel:</b> ${d.vessel}</p>
+<p><b>Shipping Line:</b> ${d.line}</p>
+<p><b>Price:</b> ${d.price}</p>
+<p><b>Shipment Date:</b> ${d.date}</p>
+<p><b>Arrival:</b> ${d.arrival}</p>
 
-      <br><br>
-      <button onclick="downloadPDF()">Download PDF</button>
+<div class="stamp">✔ APPROVED</div>
 
-    </div>
-    `;
+</div>
+`;
 
-    // ✅ توليد باركود حقيقي (مهم جداً)
-    JsBarcode("#barcode", input, {
-      format: "CODE128",
-      width: 2,
-      height: 70,
-      displayValue: true
-    });
+/* BARCODE */
+JsBarcode("#barcode", input, {
+format:"CODE128",
+displayValue:false,
+width:2,
+height:80
+});
 
-    // QR
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
-      text: window.location.href + "?code=" + input,
-      width: 120,
-      height: 120
-    });
+/* QR */
+document.getElementById("qrcode").innerHTML="";
+new QRCode(document.getElementById("qrcode"),{
+text: window.location.href + "?code=" + input,
+width:120,
+height:120
+});
 
-  } else {
-    result.innerHTML = "Not found";
-  }
+}else{
+result.innerHTML = "<p style='color:red'>Not found</p>";
 }
 
-// PDF
-function downloadPDF() {
-  var element = document.getElementById("invoice");
-  html2pdf().from(element).save("shipment.pdf");
 }
 
-// auto load
-window.onload = function () {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-  if (code) {
-    document.getElementById("trackInput").value = code;
-    track();
-  }
-};
+/* PDF */
+function downloadPDF(){
+var element = document.getElementById("pdfContent");
+html2pdf().from(element).save("shipping.pdf");
+}
 
+/* قراءة QR */
+window.onload = function(){
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+if(code){
+document.getElementById("trackInput").value = code;
+track();
+}
+}
 </script>
 
 </body>
