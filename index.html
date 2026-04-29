@@ -3,76 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trustway Logistics</title>
+<title>Shipment Tracking - Trustway</title>
 
 <style>
-body {font-family: Arial; background:#f2f4f8; margin:0;}
-header {background:#1e3a8a; color:white; padding:15px; text-align:center;}
-nav {background:#111827; padding:10px; text-align:center;}
-nav a {color:white; margin:10px; text-decoration:none;}
-.container {max-width:600px; margin:30px auto; background:white; padding:20px; border-radius:10px;}
-input {width:100%; padding:10px;}
-button {width:100%; padding:10px; margin-top:10px; background:#2563eb; color:white; border:none;}
-.result {margin-top:20px; padding:15px; background:#f9fafb;}
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+header {
+    background: #2b5dab;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+nav {
+    background: #1f4a8a;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #2b5dab;
+    color: white;
+    border: none;
+}
+
+.status {
+    background: #c8e6c9;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}
+
+img {
+    width: 100%;
+    margin-top: 15px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Shipment Tracking</h2>
+    Shipment Tracking
 </header>
 
 <nav>
-<a href="index.html">Home</a>
-<a href="about.html">About</a>
-<a href="contact.html">Contact</a>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('about')">About</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
 </nav>
 
-<div class="container">
-<h3>Track Your Shipment</h3>
+<div class="container" id="home">
 
-<input id="trackInput" placeholder="Enter Tracking Number">
-<button onclick="track()">Track</button>
+    <h3>Track Your Shipment</h3>
 
-<div id="result"></div>
+    <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+    <button onclick="track()">Track Shipment</button>
+
+    <div id="result" class="hidden">
+
+        <div class="status">IN TRANSIT</div>
+
+        <p><b>Tracking:</b> HC1001-A9B7C3D5</p>
+        <p><b>Shipper:</b> Shenzhen Global Trade</p>
+        <p><b>Consignee:</b> Mustafa</p>
+        <p><b>Origin:</b> China</p>
+        <p><b>Destination:</b> Iraq</p>
+        <p><b>Vessel:</b> EVERGREEN</p>
+        <p><b>Container:</b> EVER9876543</p>
+        <p><b>Weight:</b> 18,250 KG</p>
+        <p><b>Departure:</b> 13 Mar 2026</p>
+        <p><b>Arrival:</b> 07 May 2026</p>
+
+        <img src="bill.png" alt="Bill of Lading">
+
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="container hidden" id="about">
+    <h2>About Us</h2>
+    <p>
+        Trustway Logistics is a global shipping and logistics company providing reliable
+        cargo tracking and freight services worldwide.
+    </p>
+</div>
+
+<!-- CONTACT -->
+<div class="container hidden" id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: support@trustwayship.com</p>
+    <p>Phone: +86 755 1234 5678</p>
 </div>
 
 <script>
-const data = {
-"HC1001": {
-status:"IN TRANSIT",
-shipper:"Shenzhen Global Trade",
-consignee:"Mustafa",
-origin:"China",
-destination:"Iraq"
-},
-"TR2002": {
-status:"DELIVERED",
-shipper:"Dubai Export",
-consignee:"Ahmed",
-origin:"UAE",
-destination:"Egypt"
-}
-};
+function track() {
+    let input = document.getElementById("trackingInput").value;
 
-function track(){
-let code = document.getElementById("trackInput").value.toUpperCase();
-let r = document.getElementById("result");
-
-if(data[code]){
-let d = data[code];
-r.innerHTML = `
-<h3>${d.status}</h3>
-<p><b>Tracking:</b> ${code}</p>
-<p><b>Shipper:</b> ${d.shipper}</p>
-<p><b>Consignee:</b> ${d.consignee}</p>
-<p><b>From:</b> ${d.origin}</p>
-<p><b>To:</b> ${d.destination}</p>
-`;
-}else{
-r.innerHTML = "<p style='color:red'>Not Found</p>";
+    if(input === "HC1001-A9B7C3D5") {
+        document.getElementById("result").classList.remove("hidden");
+    } else {
+        alert("Invalid Tracking Number");
+    }
 }
+
+function showPage(page) {
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("about").classList.add("hidden");
+    document.getElementById("contact").classList.add("hidden");
+
+    document.getElementById(page).classList.remove("hidden");
 }
 </script>
 
