@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trustway Logistics Tracking</title>
+<title>Tracking</title>
 
 <style>
 body {
@@ -68,19 +67,9 @@ button:hover {
     border-radius: 8px;
 }
 
-.row {
-    margin: 8px 0;
-}
-
-.label {
-    font-weight: bold;
-}
-
-img.bill {
+img {
     width: 100%;
-    margin-top: 20px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 </style>
 </head>
@@ -88,46 +77,32 @@ img.bill {
 <body>
 
 <header>
-    <img src="logo.png" class="logo">
-    <h2>TRUSTWAY LOGISTICS</h2>
+    <h2>Shipment Tracking</h2>
 </header>
 
 <div class="container">
 
-    <h3>Track your shipment</h3>
+    <h3>Enter Tracking Number</h3>
 
-    <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
-    <button onclick="track()">Track Shipment</button>
+    <input type="text" id="trackingInput" placeholder="Enter tracking code">
 
-    <div class="result" id="result">
+    <button onclick="trackShipment()">Track</button>
 
+    <div id="result" class="result">
         <div class="card">
-            <div class="row"><span class="label">Tracking:</span> HC1001</div>
-            <div class="row"><span class="label">Customer:</span> Mustafa</div>
-            <div class="row"><span class="label">Status:</span> In Transit</div>
-            <div class="row"><span class="label">From:</span> Shenzhen Port, China</div>
-            <div class="row"><span class="label">To:</span> Umm Qasr Port, Iraq</div>
-            <div class="row"><span class="label">Shipping Line:</span> Evergreen Line</div>
-            <div class="row"><span class="label">Vessel:</span> EVERGREEN</div>
-            <div class="row"><span class="label">Container:</span> MSKU1234567</div>
-            <div class="row"><span class="label">Shipment Date:</span> 11 Mar 2026</div>
-            <div class="row"><span class="label">Estimated Arrival:</span> 07 May 2026</div>
-            <div class="row"><span class="label">Price:</span> $2900</div>
+            <img id="shipmentImage" src="Bill.png" style="display:none;">
         </div>
-
-        <!-- صورة البوليصة -->
-        <img src="bill.jpg" class="bill">
-
     </div>
 
 </div>
 
 <script>
-function track() {
+function trackShipment() {
     var code = document.getElementById("trackingInput").value;
 
-    if(code === "HC1001"){
+    if(code === "HC1001") {
         document.getElementById("result").style.display = "block";
+        document.getElementById("shipmentImage").style.display = "block";
     } else {
         alert("Tracking number not found");
     }
