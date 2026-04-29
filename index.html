@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shipment Tracking</title>
 
 <style>
 body {
-    font-family: Arial;
-    background: #f2f2f2;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
     margin: 0;
 }
 
 .header {
-    background: #1e6bd6;
+    background: #2d6cdf;
     color: white;
     text-align: center;
     padding: 15px;
@@ -20,60 +21,58 @@ body {
 }
 
 .container {
-    width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     margin: 30px auto;
     background: white;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 input {
     width: 100%;
-    padding: 10px;
-    margin-top: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 button {
     width: 100%;
     padding: 12px;
-    margin-top: 10px;
-    background: #1e6bd6;
+    background: #2d6cdf;
     color: white;
     border: none;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
 }
 
+button:hover {
+    background: #1f4fa8;
+}
+
 .status {
-    margin-top: 15px;
-    padding: 10px;
     background: #d4edda;
-    text-align: center;
-    font-weight: bold;
-    display: none;
-}
-
-.error {
-    margin-top: 15px;
     padding: 10px;
-    background: #f8d7da;
     text-align: center;
-    color: red;
-    display: none;
-}
-
-.result {
     margin-top: 15px;
-    display: none;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
-.loading {
-    text-align: center;
-    display: none;
-    margin-top: 10px;
+.details {
+    margin-top: 15px;
+    line-height: 1.8;
+}
+
+img {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 8px;
 }
 </style>
-
 </head>
 
 <body>
@@ -82,96 +81,49 @@ button {
 
 <div class="container">
 
-    <label>Enter Tracking Number</label>
-    <input id="trackInput" placeholder="Example: HC1001">
+    <h3>Track Your Shipment</h3>
 
-    <button onclick="track()">Track Shipment</button>
+    <!-- INPUT بدون أي placeholder -->
+    <input id="trackInput" type="text" required>
 
-    <div class="loading" id="loading">Checking shipment...</div>
+    <button onclick="trackShipment()">Track Shipment</button>
 
-    <div class="error" id="error">Tracking number not found</div>
-
-    <div class="status" id="status"></div>
-
-    <div class="result" id="result"></div>
+    <div id="result"></div>
 
 </div>
 
 <script>
+function trackShipment() {
+    var code = document.getElementById("trackInput").value;
+    var result = document.getElementById("result");
 
-const shipments = {
-    "HC1001": {
-        status: "IN TRANSIT",
-        shipper: "Shenzhen Global Trade",
-        consignee: "Mustafa",
-        origin: "China",
-        destination: "Iraq",
-        vessel: "EVERGREEN",
-        container: "MSKU1234567",
-        weight: "18,250 KG",
-        departure: "13 Mar 2026",
-        arrival: "07 May 2026"
-    },
+    if(code === "HC1001") {
+        result.innerHTML = `
+        <div class="status">IN TRANSIT</div>
 
-    "HC2002": {
-        status: "DELIVERED",
-        shipper: "Dubai Export Co.",
-        consignee: "Ahmed",
-        origin: "UAE",
-        destination: "Egypt",
-        vessel: "MAERSK",
-        container: "MSKU999888",
-        weight: "9,000 KG",
-        departure: "01 Feb 2026",
-        arrival: "20 Feb 2026"
+        <div class="details">
+        <b>Tracking:</b> HC1001<br>
+        <b>Shipper:</b> Shenzhen Global Trade<br>
+        <b>Consignee:</b> Mustafa<br>
+        <b>Origin:</b> China<br>
+        <b>Destination:</b> Iraq<br>
+        <b>Vessel:</b> EVERGREEN<br>
+        <b>Container:</b> MSKU1234567<br>
+        <b>Weight:</b> 18,250 KG<br>
+        <b>Departure:</b> 13 Mar 2026<br>
+        <b>Arrival:</b> 07 May 2026
+        </div>
+
+        <img src="Bill.png">
+        `;
+    } else {
+        result.innerHTML = `
+        <div style="color:red; text-align:center; margin-top:15px;">
+        Invalid Tracking Number
+        </div>
+        `;
     }
-};
-
-function track() {
-
-    let code = document.getElementById("trackInput").value.trim();
-
-    document.getElementById("error").style.display = "none";
-    document.getElementById("result").style.display = "none";
-    document.getElementById("status").style.display = "none";
-
-    document.getElementById("loading").style.display = "block";
-
-    setTimeout(() => {
-
-        document.getElementById("loading").style.display = "none";
-
-        if (shipments[code]) {
-
-            let s = shipments[code];
-
-            document.getElementById("status").innerText = s.status;
-            document.getElementById("status").style.display = "block";
-
-            document.getElementById("result").innerHTML = `
-                <p><b>Tracking:</b> ${code}</p>
-                <p><b>Shipper:</b> ${s.shipper}</p>
-                <p><b>Consignee:</b> ${s.consignee}</p>
-                <p><b>Origin:</b> ${s.origin}</p>
-                <p><b>Destination:</b> ${s.destination}</p>
-                <p><b>Vessel:</b> ${s.vessel}</p>
-                <p><b>Container:</b> ${s.container}</p>
-                <p><b>Weight:</b> ${s.weight}</p>
-                <p><b>Departure:</b> ${s.departure}</p>
-                <p><b>Arrival:</b> ${s.arrival}</p>
-                <br>
-                <img src="Bill.png" width="100%">
-            `;
-
-            document.getElementById("result").style.display = "block";
-
-        } else {
-            document.getElementById("error").style.display = "block";
-        }
-
-    }, 1500);
 }
-
 </script>
 
 </body>
