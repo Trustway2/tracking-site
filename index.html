@@ -62,6 +62,10 @@ button {
     font-weight: bold;
 }
 
+.hidden {
+    display: none;
+}
+
 img {
     width: 100%;
     margin-top: 15px;
@@ -83,6 +87,7 @@ img {
 <a href="#" onclick="showPage('contact')">Contact</a>
 </nav>
 
+<!-- HOME -->
 <div class="container" id="home">
 
 <h3>Track Your Shipment</h3>
@@ -90,83 +95,74 @@ img {
 <input id="trackingInput" placeholder="Enter Tracking Number">
 <button onclick="track()">Track Shipment</button>
 
-<div id="result" style="margin-top:15px;"></div>
+<div id="result" class="hidden"></div>
 
 </div>
 
 <!-- ABOUT -->
-<div class="container" id="about" style="display:none;">
+<div class="container hidden" id="about">
 <h2>About Us</h2>
-<p>Trustway Logistics provides global cargo tracking services.</p>
+<p>Trustway Logistics is a global shipping service providing reliable cargo tracking.</p>
 </div>
 
 <!-- CONTACT -->
-<div class="container" id="contact" style="display:none;">
-<h2>Contact Us</h2>
+<div class="container hidden" id="contact">
+<h2>Contact</h2>
 <p>Email: support@trustwayship.com</p>
 </div>
 
 <script>
 
+// 👇 بيانات ثابتة بدون Firebase
 const shipments = {
-"HC1001": {
-status: "In Transit",
-customer: "Mustafa fathelrhman",
-shipment: "Solar powered ev charging devices",
-from: "Shenzhen Port, China",
-to: "Umm Qasr Port, Iraq",
-price: "$2900",
-arrival: "7 May 2026",
-image: "bill.jpg"
-},
+    "HC1001": {
+        status: "IN TRANSIT",
+        customer: "Mustafa fathelrhman",
+        shipment: "Solar powered ev charging devices",
+        from: "Shenzhen Port, China",
+        to: "Umm Qasr Port, Iraq",
+        price: "$2900",
+        arrival: "7 May 2026",
 
-"HC1001-A9B7C3D5": {
-status: "In Transit",
-customer: "Mustafa fathelrhman",
-shipment: "Solar powered ev charging devices",
-from: "Shenzhen Port, China",
-to: "Umm Qasr Port, Iraq",
-price: "$2900",
-arrival: "7 May 2026",
-image: "bill.jpg"
-}
+        // 👇 رابط الصورة المباشر من GitHub (مهم)
+        image: "https://raw.githubusercontent.com/Trustway2/tracking-site/main/bill.png"
+    }
 };
 
 function track() {
+    let code = document.getElementById("trackingInput").value.trim();
+    let result = document.getElementById("result");
 
-let code = document.getElementById("trackingInput").value.trim();
-let result = document.getElementById("result");
+    if (shipments[code]) {
+        let d = shipments[code];
 
-if(shipments[code]) {
+        result.innerHTML = `
+            <div class="status">${d.status}</div>
 
-let d = shipments[code];
+            <p><b>Tracking:</b> ${code}</p>
+            <p><b>Customer:</b> ${d.customer}</p>
+            <p><b>Shipment:</b> ${d.shipment}</p>
+            <p><b>From:</b> ${d.from}</p>
+            <p><b>To:</b> ${d.to}</p>
+            <p><b>Price:</b> ${d.price}</p>
+            <p><b>Arrival:</b> ${d.arrival}</p>
 
-result.innerHTML = `
-<div class="status">${d.status}</div>
+            <img src="${d.image}">
+        `;
 
-<p><b>Tracking:</b> ${code}</p>
-<p><b>Customer:</b> ${d.customer}</p>
-<p><b>Shipment:</b> ${d.shipment}</p>
-<p><b>From:</b> ${d.from}</p>
-<p><b>To:</b> ${d.to}</p>
-<p><b>Price:</b> ${d.price}</p>
-<p><b>Arrival:</b> ${d.arrival}</p>
+        result.classList.remove("hidden");
 
-<img src="${d.image}">
-`;
-
-} else {
-result.innerHTML = "<p style='color:red;'>Tracking number not found</p>";
-}
-
+    } else {
+        alert("Invalid Tracking Number");
+    }
 }
 
 function showPage(page) {
-document.getElementById("home").style.display = "none";
-document.getElementById("about").style.display = "none";
-document.getElementById("contact").style.display = "none";
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("about").classList.add("hidden");
+    document.getElementById("contact").classList.add("hidden");
 
-document.getElementById(page).style.display = "block";
+    document.getElementById(page).classList.remove("hidden");
 }
 
 </script>
