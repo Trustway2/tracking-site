@@ -3,146 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trustway Logistics</title>
-
-<!-- QR + Barcode -->
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>Trustway Logistics Tracking</title>
 
 <style>
 body {
-    font-family: Arial;
-    background: #f4f7fb;
-    text-align: center;
     margin: 0;
+    font-family: Arial;
+    background: #f2f4f7;
 }
 
-.header {
-    background: #0a7d32;
+header {
+    background: #0d6efd;
     color: white;
     padding: 15px;
-    font-size: 22px;
+    text-align: center;
+}
+
+.logo {
+    width: 60px;
+    vertical-align: middle;
 }
 
 .container {
     max-width: 600px;
-    margin: auto;
-    margin-top: 30px;
+    margin: 30px auto;
     background: white;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 input {
-    padding: 10px;
-    width: 70%;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 button {
-    padding: 10px 20px;
-    background: green;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #0d6efd;
     color: white;
     border: none;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
 }
 
-.card {
+button:hover {
+    background: #084298;
+}
+
+.result {
+    display: none;
     margin-top: 20px;
-    text-align: left;
-    border: 1px solid #ddd;
+}
+
+.card {
+    background: #f9f9f9;
     padding: 15px;
+    border-radius: 8px;
 }
 
-.box {
-    background: #f5f5f5;
-    padding: 8px;
-    margin: 5px 0;
+.row {
+    margin: 8px 0;
 }
 
-.stamp {
-    border: 2px solid green;
-    display: inline-block;
-    padding: 8px;
-    color: green;
-    transform: rotate(-10deg);
-    margin-top: 10px;
+.label {
+    font-weight: bold;
+}
+
+img.bill {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">🚚 TRUSTWAY LOGISTICS</div>
+<header>
+    <img src="logo.png" class="logo">
+    <h2>TRUSTWAY LOGISTICS</h2>
+</header>
 
 <div class="container">
-<h3>Track your shipment</h3>
 
-<input id="code" placeholder="Enter tracking number">
-<br><br>
+    <h3>Track your shipment</h3>
 
-<button onclick="track()">Track</button>
+    <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+    <button onclick="track()">Track Shipment</button>
 
-<div id="result"></div>
+    <div class="result" id="result">
+
+        <div class="card">
+            <div class="row"><span class="label">Tracking:</span> HC1001</div>
+            <div class="row"><span class="label">Customer:</span> Mustafa</div>
+            <div class="row"><span class="label">Status:</span> In Transit</div>
+            <div class="row"><span class="label">From:</span> Shenzhen Port, China</div>
+            <div class="row"><span class="label">To:</span> Umm Qasr Port, Iraq</div>
+            <div class="row"><span class="label">Shipping Line:</span> Evergreen Line</div>
+            <div class="row"><span class="label">Vessel:</span> EVERGREEN</div>
+            <div class="row"><span class="label">Container:</span> MSKU1234567</div>
+            <div class="row"><span class="label">Shipment Date:</span> 11 Mar 2026</div>
+            <div class="row"><span class="label">Estimated Arrival:</span> 07 May 2026</div>
+            <div class="row"><span class="label">Price:</span> $2900</div>
+        </div>
+
+        <!-- صورة البوليصة -->
+        <img src="bill.jpg" class="bill">
+
+    </div>
+
 </div>
 
 <script>
+function track() {
+    var code = document.getElementById("trackingInput").value;
 
-function track(){
-
-let code = document.getElementById("code").value.trim();
-
-if(code === ""){
-  document.getElementById("result").innerHTML = "";
-  return;
+    if(code === "HC1001"){
+        document.getElementById("result").style.display = "block";
+    } else {
+        alert("Tracking number not found");
+    }
 }
-
-let site = "https://trustway2.github.io/tracking-site/?code=" + code;
-
-document.getElementById("result").innerHTML = `
-<div class="card">
-
-<h3>Shipping Document</h3>
-
-<svg id="barcode"></svg>
-<div id="qrcode"></div>
-
-<div class="box"><b>Tracking:</b> ${code}</div>
-<div class="box"><b>Status:</b> In Transit</div>
-<div class="box"><b>From:</b> Shenzhen, China</div>
-<div class="box"><b>To:</b> Umm Qasr, Iraq</div>
-<div class="box"><b>Shipping Line:</b> Evergreen Line</div>
-
-<div class="stamp">✔ APPROVED</div>
-
-</div>
-`;
-
-// barcode
-JsBarcode("#barcode", code, {
-  format: "CODE128",
-  width: 2,
-  height: 60
-});
-
-// QR
-document.getElementById("qrcode").innerHTML="";
-new QRCode(document.getElementById("qrcode"), {
-  text: site,
-  width: 120,
-  height: 120
-});
-
-}
-
-// 🔥 فتح تلقائي فقط لو فيه code
-let params = new URLSearchParams(window.location.search);
-let auto = params.get("code");
-
-if(auto && auto !== ""){
-  document.getElementById("code").value = auto;
-  track();
-}
-
 </script>
 
 </body>
