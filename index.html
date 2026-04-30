@@ -51,7 +51,6 @@ button {
   background: #2f5fa7;
   color: white;
   border: none;
-  cursor: pointer;
 }
 
 .status {
@@ -86,60 +85,35 @@ img {
 <div class="container">
   <h3>Track Your Shipment</h3>
 
-  <input type="text" id="trackingInput" placeholder="Enter tracking code">
+  <input type="text" id="trackInput" placeholder="Enter tracking code">
   <button onclick="track()">Track Shipment</button>
 
   <div id="result"></div>
 </div>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
+function track() {
+  var code = document.getElementById("trackInput").value;
+  var result = document.getElementById("result");
 
-const firebaseConfig = {
-  apiKey: "PUT YOUR API KEY",
-  authDomain: "PUT YOUR DOMAIN",
-  projectId: "PUT YOUR PROJECT ID",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.track = async function () {
-  const code = document.getElementById("trackingInput").value.trim();
-  const result = document.getElementById("result");
-
-  if (!code) {
-    result.innerHTML = "Please enter tracking code";
-    return;
-  }
-
-  const docRef = doc(db, "shipments", code);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-
+  if (code === "HC1001") {
     result.innerHTML = `
-      <div class="status">${data.Status}</div>
+      <div class="status">IN TRANSIT</div>
 
-      <p><b>Tracking:</b> ${data.trackingNumber}</p>
-      <p><b>Customer:</b> ${data["Customer name"]}</p>
-      <p><b>Shipment:</b> ${data["Shipment name"]}</p>
-
-      <p><b>From:</b> ${data.originport || data.originPort}</p>
-      <p><b>To:</b> ${data.destinationPort}</p>
-
-      <p><b>Price:</b> $${data.price}</p>
-      <p><b>Arrival:</b> ${data.estimatedArrival}</p>
+      <p><b>Tracking:</b> HC1001</p>
+      <p><b>Customer:</b> Mustafa fathelrhman</p>
+      <p><b>Shipment:</b> Solar powered ev charging devices</p>
+      <p><b>From:</b> Shenzhen Port, China</p>
+      <p><b>To:</b> Umm Qasr Port, Iraq</p>
+      <p><b>Price:</b> $2900</p>
+      <p><b>Arrival:</b> 7 May 2026</p>
 
       <img src="bill.png">
     `;
   } else {
-    result.innerHTML = "Tracking not found";
+    result.innerHTML = "<p style='color:red'>Tracking number not found</p>";
   }
-};
+}
 </script>
 
 </body>
