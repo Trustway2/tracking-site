@@ -2,88 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shipment Verification</title>
+<title>Verification</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #f5f5f5;
-  text-align: center;
+  margin: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 /* الصورة */
-.bill-img {
-  width: 90%;
-  max-width: 700px;
-  margin-top: 20px;
-  border-radius: 10px;
-}
-
-/* كارت البيانات */
-.card {
-  background: white;
-  padding: 15px;
-  margin: 20px auto;
-  width: 90%;
-  max-width: 500px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+img {
+  max-width: 100%;
+  height: auto;
 }
 </style>
 
 </head>
 <body>
 
-<h2>✔ Verified Shipment</h2>
-
-<!-- الصورة -->
-<img src="bill.png" class="bill-img">
-
-<!-- البيانات -->
-<div class="card">
-  <p><b>Tracking:</b> <span id="tracking"></span></p>
-  <p><b>Status:</b> <span id="status"></span></p>
-  <p><b>Customer:</b> <span id="customer"></span></p>
-  <p><b>From:</b> <span id="from"></span></p>
-  <p><b>To:</b> <span id="to"></span></p>
-  <p><b>Arrival:</b> <span id="arrival"></span></p>
-  <p><b>Price:</b> <span id="price"></span></p>
-</div>
-
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// قراءة الكود من الرابط
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
-
-// جلب البيانات
-const docRef = doc(db, "shipments", id);
-const docSnap = await getDoc(docRef);
-
-if (docSnap.exists()) {
-  const data = docSnap.data();
-
-  document.getElementById("tracking").innerText = data.tracking || "-";
-  document.getElementById("status").innerText = data.status || "-";
-  document.getElementById("customer").innerText = data.customer || "-";
-  document.getElementById("from").innerText = data.from || "-";
-  document.getElementById("to").innerText = data.to || "-";
-  document.getElementById("arrival").innerText = data.arrival || "-";
-  document.getElementById("price").innerText = data.price || "-";
-}
-</script>
+<img src="bill.png">
 
 </body>
 </html>
