@@ -1,73 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Global Shipment Tracking</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Global Shipment Tracking</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      background: #f2f2f2;
-    }
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f2f2f2;
+}
 
-    header {
-      background: #2f5fa7;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+header {
+  background: #2f5fa7;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
 
-    nav {
-      background: #1f4c8f;
-      text-align: center;
-      padding: 10px;
-    }
+nav {
+  background: #1f4c8f;
+  text-align: center;
+  padding: 10px;
+}
 
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-    }
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
 
-    .container {
-      max-width: 700px;
-      margin: 30px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-    }
+.container {
+  max-width: 700px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #2f5fa7;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+button {
+  width: 100%;
+  padding: 10px;
+  background: #2f5fa7;
+  color: white;
+  border: none;
+}
 
-    .status {
-      background: #cfe8d5;
-      padding: 10px;
-      text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+.status {
+  background: #cfe8d5;
+  padding: 10px;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
 
-    img {
-      width: 100%;
-      margin-top: 20px;
-      border-radius: 5px;
-    }
-  </style>
+img {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+</style>
+
 </head>
 
 <body>
@@ -84,60 +83,48 @@
 </nav>
 
 <div class="container">
-
   <h3>Track Your Shipment</h3>
 
-  <!-- input بدون قيمة -->
-  <input type="text" id="trackingInput" placeholder="Enter tracking code">
-
+  <input id="trackingInput" placeholder="Enter tracking code">
   <button onclick="track()">Track Shipment</button>
 
   <div class="status" id="status">---</div>
 
-  <!-- البيانات -->
-  <p><b>Tracking:</b> <span id="tracking">-</span></p>
-  <p><b>Customer:</b> <span id="customer">-</span></p>
-  <p><b>Shipment:</b> <span id="shipment">-</span></p>
-  <p><b>From:</b> <span id="from">-</span></p>
-  <p><b>To:</b> <span id="to">-</span></p>
-  <p><b>Price:</b> <span id="price">-</span></p>
-  <p><b>Arrival:</b> <span id="arrival">-</span></p>
+  <p><b>Tracking:</b> <span id="tracking"></span></p>
+  <p><b>Customer:</b> <span id="customer"></span></p>
+  <p><b>Shipment:</b> <span id="shipment"></span></p>
+  <p><b>From:</b> <span id="from"></span></p>
+  <p><b>To:</b> <span id="to"></span></p>
+  <p><b>Price:</b> <span id="price"></span></p>
+  <p><b>Arrival:</b> <span id="arrival"></span></p>
 
-  <!-- الصورة -->
-  <img id="billImage" src="bill.png">
+  <img id="shipmentImage" />
 
 </div>
 
 <script>
 function track() {
-  const code = document.getElementById("trackingInput").value.trim();
+  let code = document.getElementById("trackingInput").value;
 
-  if (!code) {
-    alert("Please enter a tracking code");
-    return;
+  if (code === "HC1001") {
+
+    document.getElementById("status").innerText = "IN TRANSIT";
+
+    document.getElementById("tracking").innerText = "HC1001";
+    document.getElementById("customer").innerText = "Mustafa fathelrhman";
+    document.getElementById("shipment").innerText = "Solar powered ev charging devices";
+    document.getElementById("from").innerText = "Shenzhen Port, China";
+    document.getElementById("to").innerText = "Umm Qasr Port, Iraq";
+    document.getElementById("price").innerText = "$2900";
+    document.getElementById("arrival").innerText = "7 May 2026";
+
+    // 👇 حط هنا رابط الصورة بتاعتك
+    document.getElementById("shipmentImage").src =
+    "PUT_IMAGE_LINK_HERE";
+
+  } else {
+    document.getElementById("status").innerText = "NOT FOUND";
   }
-
-  fetch(`/api/track/${code}`)
-    .then(res => res.json())
-    .then(data => {
-
-      document.getElementById("tracking").innerText = data.tracking_number || "-";
-      document.getElementById("status").innerText = data.status || "-";
-      document.getElementById("customer").innerText = data.customer || "-";
-      document.getElementById("shipment").innerText = data.shipment || "-";
-      document.getElementById("from").innerText = data.from || "-";
-      document.getElementById("to").innerText = data.to || "-";
-      document.getElementById("price").innerText = data.price || "-";
-      document.getElementById("arrival").innerText = data.arrival || "-";
-
-      if (data.image) {
-        document.getElementById("billImage").src = data.image;
-      }
-
-    })
-    .catch(() => {
-      alert("Error loading tracking data");
-    });
 }
 </script>
 
