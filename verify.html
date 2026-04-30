@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Verify Shipment | Trustway Logistics</title>
+<meta charset="UTF-8">
+<title>Verify Shipment | Trustway Logistics</title>
 
-  <!-- Firebase (compat version عشان يشتغل بسهولة) -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<!-- Firebase (compat version) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f4f4;
-    }
+<style>
+body {
+  font-family: Arial;
+  background: #f4f4f4;
+}
 
-    .box {
-      max-width: 600px;
-      margin: 60px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+.box {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
 
-    .ok { color: green; }
-    .err { color: red; }
+.ok { color: green; }
+.err { color: red; }
 
-    p {
-      margin: 8px 0;
-      font-size: 16px;
-    }
-  </style>
+p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+</style>
 </head>
 
 <body>
@@ -39,66 +39,74 @@
 <div class="box" id="result">Checking document...</div>
 
 <script>
-  // 🔥 Firebase config (بتاعك)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
-    authDomain: "shipping-system-10d98.firebaseapp.com",
-    projectId: "shipping-system-10d98",
-    storageBucket: "shipping-system-10d98.firebasestorage.app",
-    messagingSenderId: "498079715287",
-    appId: "1:498079715287:web:4ea3734979ca7c06d40592"
-  };
+// 🔥 Firebase Config (بتاعك)
+const firebaseConfig = {
+  apiKey: "AIzaSyDplDmQn7oBNQouovvO4z9WpoDRmR72GLo",
+  authDomain: "shipping-system-10d98.firebaseapp.com",
+  projectId: "shipping-system-10d98",
+  storageBucket: "shipping-system-10d98.firebasestorage.app",
+  messagingSenderId: "498079715287",
+  appId: "1:498079715287:web:4ea3734979ca7c06d40592"
+};
 
-  // تشغيل Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+// تشغيل Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  // نجيب verificationId من اللينك
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+// قراءة ID من اللينك
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-  async function verify() {
+// الفحص
+async function verify() {
 
-    if (!id) {
+  if (!id) {
+    document.getElementById("result").innerHTML =
+      "<h2 class='err'>❌ No Verification ID</h2>";
+    return;
+  }
+
+  try {
+    const snapshot = await db.collection("shipments")
+      .where("verificationId", "==", id)
+      .get();
+
+    if (snapshot.empty) {
       document.getElementById("result").innerHTML =
-        "<h2 class='err'>❌ No Verification ID</h2>";
+        "<h2 class='err'>❌ Invalid Document</h2>";
       return;
     }
 
-    try {
-      const snapshot = await db.collection("shipments")
-        .where("verificationId", "==", id)
-        .get();
+    const data = snapshot.docs[0].data();
 
-      if (snapshot.empty) {
-        document.getElementById("result").innerHTML =
-          "<h2 class='err'>❌ Invalid Document</h2>";
-        return;
-      }
+    // ✅ تحويل التاريخ
+    const arrivalDate = data.estimatedArrival?.toDate
+      ? data.estimatedArrival.toDate().toLocaleString()
+      : data.estimatedArrival;
 
-      const data = snapshot.docs[0].data();
+    // ✅ عرض البيانات
+    document.getElementById("result").innerHTML = `
+      <h2 class="ok">✔ Verified Shipment</h2>
 
-      document.getElementById("result").innerHTML = `
-        <h2 class="ok">✔ Verified Shipment</h2>
+      <p><b>Tracking:</b> ${data.trackingNumber}</p>
+      <p><b>Status:</b> ${data.Status}</p>
+      <p><b>Customer:</b> ${data["Customer name"]}</p>
 
-        <p><b>Tracking:</b> ${data.trackingNumber || "-"}</p>
-        <p><b>Status:</b> ${data.Status || "-"}</p>
-        <p><b>Customer:</b> ${data["Customer name"] || "-"}</p>
+      <p><b>From:</b> ${data.originport}</p>
+      <p><b>To:</b> ${data.destinationPort}</p>
 
-        <p><b>From:</b> ${data.originport || "-"}</p>
-        <p><b>To:</b> ${data.destinationPort || "-"}</p>
+      <p><b>Estimated Arrival:</b> ${arrivalDate}</p>
+      <p><b>Price:</b> $${data.price}</p>
+    `;
 
-        <p><b>Estimated Arrival:</b> ${data.estimatedArrival || "-"}</p>
-        <p><b>Price:</b> $${data.price || "-"}</p>
-      `;
-    } catch (error) {
-      document.getElementById("result").innerHTML =
-        "<h2 class='err'>❌ Error loading data</h2>";
-      console.error(error);
-    }
+  } catch (error) {
+    document.getElementById("result").innerHTML =
+      "<h2 class='err'>❌ Error loading data</h2>";
+    console.error(error);
   }
+}
 
-  verify();
+verify();
 </script>
 
 </body>
